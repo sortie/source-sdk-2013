@@ -335,9 +335,9 @@ bspbrush_t *AllocBrush (int numsides)
 	static int s_BrushId = 0;
 
 	bspbrush_t	*bb;
-	int			c;
+	size_t		c;
 
-	c = (int)&(((bspbrush_t *)0)->sides[numsides]);
+	c = (size_t)&(((bspbrush_t *)0)->sides[numsides]);
 	bb = (bspbrush_t*)malloc(c);
 	memset (bb, 0, c);
 	bb->id = s_BrushId++;
@@ -391,10 +391,10 @@ Duplicates the brush, the sides, and the windings
 bspbrush_t *CopyBrush (bspbrush_t *brush)
 {
 	bspbrush_t *newbrush;
-	int			size;
+	size_t		size;
 	int			i;
 	
-	size = (int)&(((bspbrush_t *)0)->sides[brush->numsides]);
+	size = (size_t)&(((bspbrush_t *)0)->sides[brush->numsides]);
 
 	newbrush = AllocBrush (brush->numsides);
 	memcpy (newbrush, brush, size);
