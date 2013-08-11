@@ -1217,7 +1217,7 @@ FORCEINLINE int RoundFloatToInt(float f)
 	flResult = __fctiw( f );
 	return pResult[1];
 #else
-#error Unknown architecture
+	return (int) f;
 #endif
 }
 
