@@ -54,3 +54,7 @@ config.cfg
 # shader files
 *.tmp
 
+# odd stuff
+*.o
+*.a
+*.project
