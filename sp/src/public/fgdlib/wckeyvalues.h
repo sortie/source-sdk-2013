@@ -16,7 +16,9 @@
 #pragma warning(push, 1)
 #pragma warning(disable:4701 4702 4530)
 #endif
+#include "valve_minmax_off.h"
 #include <fstream>
+#include "valve_minmax_on.h"
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
