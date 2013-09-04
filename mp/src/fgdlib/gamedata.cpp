@@ -2,9 +2,13 @@
 //
 //=============================================================================
 
+#if defined(_WIN32)
 #include <windows.h>
+#endif
 #include <tier0/dbg.h>
+#if defined(_WIN32)
 #include <io.h>
+#endif
 #include <worldsize.h>
 #include "fgdlib/gamedata.h"
 #include "fgdlib/helperinfo.h"
@@ -282,8 +286,10 @@ BOOL GameData::Load(const char *pszFilename)
 {
 	TokenReader tr;
 
+#if defined(_WIN32)
 	if(GetFileAttributes(pszFilename) == 0xffffffff)
 		return FALSE;
+#endif
 
 	if(!tr.Open(pszFilename))
 		return FALSE;
