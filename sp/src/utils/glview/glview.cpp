@@ -6,11 +6,11 @@
 //
 //=============================================================================//
 #include "glos.h"
-#include <gl/gl.h>
-#if _MSC_VER < 1600
-#include <gl/glaux.h>
+#include <GL/gl.h>
+#if defined( _MSC_VER ) && _MSC_VER < 1600
+#include <GL/glaux.h>
 #endif
-#include <gl/glu.h>
+#include <GL/glu.h>
 #include <stdarg.h>
 #include <string.h>
 #include <stdio.h>
@@ -1425,3 +1425,9 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance
     return TRUE;
 }
 
+#if !defined( _WIN32 )
+int main(int argc, char* argv[])
+{
+	return WinMain(0, 0, argv[1], 1);
+}
+#endif
