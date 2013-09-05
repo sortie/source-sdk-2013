@@ -10,7 +10,7 @@
 #include "bitmap/tgawriter.h"
 #include "tier1/strtools.h"
 #include "vtf/vtf.h"
-#include "tier1/UtlBuffer.h"
+#include "tier1/utlbuffer.h"
 #include "tier0/dbg.h"
 #include "tier0/icommandline.h"
 #include "tier1/utlbuffer.h"
