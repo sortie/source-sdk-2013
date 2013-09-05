@@ -4,19 +4,21 @@
 //
 //===========================================================================//
 #include <stdio.h>
+#if defined( _WIN32 )
 #include <windows.h>
+#endif
 #include "tier0/dbg.h"
 #include "tier1/utldict.h"
 #include "filesystem.h"
 #include "cmdlib.h"
 #include "scriplib.h"
 #include "vstdlib/random.h"
-#include "tier1/UtlBuffer.h"
+#include "tier1/utlbuffer.h"
 #include "pacifier.h"
 #include "appframework/tier3app.h"
 #include "tier0/icommandline.h"
 #include "vgui/IVGui.h"
-#include "vgui_controls/controls.h"
+#include "vgui_controls/Controls.h"
 #include "vgui/ILocalize.h"
 #include "tier1/checksum_crc.h"
 #include "tier1/UtlSortVector.h"
@@ -49,12 +51,16 @@ SpewRetval_t SpewFunc( SpewType_t type, char const *pMsg )
 	spewed = true;
 
 	printf( "%s", pMsg );
+#if defined( _WIN32 )
 	OutputDebugString( pMsg );
+#endif
 	
 	if ( type == SPEW_ERROR )
 	{
 		printf( "\n" );
+#if defined( _WIN32 )
 		OutputDebugString( "\n" );
+#endif
 	}
 
 	return SPEW_CONTINUE;
@@ -84,7 +90,9 @@ void vprint( int depth, const char *fmt, ... )
 	while ( depth-- > 0 )
 	{
 		printf( "  " );
+#if defined( _WIN32 )
 		OutputDebugString( "  " );
+#endif
 		if ( fp )
 		{
 			fprintf( fp, "  " );
@@ -92,7 +100,9 @@ void vprint( int depth, const char *fmt, ... )
 	}
 
 	::printf( string );
+#if defined( _WIN32 )
 	OutputDebugString( string );
+#endif
 
 	if ( fp )
 	{
@@ -490,7 +500,7 @@ int CCompileCaptionsApp::Main()
 	CUtlVector< CUtlSymbol >	worklist;
 
 	int i = 1;
-	for ( i ; i<CommandLine()->ParmCount() ; i++)
+	for ( i = i ; i<CommandLine()->ParmCount() ; i++)
 	{
 		if ( CommandLine()->GetParm( i )[ 0 ] == '-' )
 		{
