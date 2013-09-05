@@ -14,14 +14,18 @@
 #include <string.h>
 #include "tier1/strtools.h"
 #include <sys/stat.h>
+#if _WIN32
 #include "conio.h"
 #include <direct.h>
 #include <io.h>
+#endif
 #include "utlbuffer.h"
 #include "tier0/dbg.h"
 #include "cmdlib.h"
 #include "tier0/icommandline.h"
+#if _WIN32
 #include "windows.h"
+#endif
 
 #include "mathlib/IceKey.H"
 #include <filesystem_tools.h>
@@ -40,18 +44,20 @@ static char g_Extension[16];
 
 static void Pause( void )
 {
+#if defined( _WIN32 )
 	if( !g_NoPause )
 	{
 		printf( "Hit a key to continue\n" );
 		getch();
 	}
+#endif
 }
 
 static void Exit(const char *msg)
 {
 	fprintf( stderr, msg );
 	Pause();
-	exit( -1 );
+	exit( 1 );
 }
 
 static void Usage( void )
@@ -63,7 +69,7 @@ static void Usage( void )
 	fprintf( stderr, "-decrypt : decypt files with given key\n" );
 	fprintf( stderr, "-newext  : new output file extension\n" );
 	Pause();
-	exit( -1 );
+	exit( 1 );
 }
 
 
@@ -230,7 +236,7 @@ int main(int argc, char* argv[])
 		pInputBaseName = argv[i];
 		int maxlen = Q_strlen( pInputBaseName ) + 1;
 
-
+#if defined( _WIN32 ) /* The Unix shell performs wildcard expansion for us. */
 		if ( strstr( pInputBaseName, "*.") )
 		{
 			char	search[ MAX_PATH ];
@@ -266,6 +272,7 @@ int main(int argc, char* argv[])
 			FindClose( hResult );
 		}
 		else
+#endif
 		{
 			Process_File( pInputBaseName, maxlen ); 			
 		}
