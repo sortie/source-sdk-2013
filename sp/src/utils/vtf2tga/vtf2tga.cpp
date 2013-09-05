@@ -5,7 +5,12 @@
 // $NoKeywords: $
 //=============================================================================//
 
+#if defined(_WIN32)
 #include <direct.h>
+#endif
+#if defined( POSIX )
+#include <unistd.h>
+#endif
 #include "mathlib/mathlib.h"
 #include "bitmap/tgawriter.h"
 #include "tier1/strtools.h"
@@ -48,7 +53,7 @@ SpewRetval_t VTF2TGAOutputFunc( SpewType_t spewType, char const *pMsg )
 static void Usage( void )
 {
 	Error( "Usage: vtf2tga -i <input vtf> [-o <output tga>] [-mip]\n" );
-	exit( -1 );
+	exit( 1 );
 }
 
 int main( int argc, char **argv )
@@ -72,10 +77,14 @@ int main( int argc, char **argv )
 	}
 
 	char pCurrentDirectory[MAX_PATH];
+#if defined( _WIN32 )
 	if ( _getcwd( pCurrentDirectory, sizeof(pCurrentDirectory) ) == NULL )
+#else
+	if ( getcwd( pCurrentDirectory, sizeof(pCurrentDirectory) ) == NULL )
+#endif
 	{
 		fprintf( stderr, "Unable to get the current directory\n" );
-		return -1;
+		return 1;
 	}
 	Q_StripTrailingSlash( pCurrentDirectory );
 
@@ -104,7 +113,7 @@ int main( int argc, char **argv )
 	if( !vtfFp )
 	{
 		Error( "Can't open %s\n", pActualVTFFileName );
-		exit( -1 );
+		exit( 1 );
 	}
 
 	fseek( vtfFp, 0, SEEK_END );
@@ -121,7 +130,7 @@ int main( int argc, char **argv )
 	if (!pTex->Unserialize( buf ))
 	{
 		Error( "*** Error reading in .VTF file %s\n", pActualVTFFileName );
-		exit(-1);
+		exit( 1 );
 	}
 	
 	Msg( "vtf width: %d\n", pTex->Width() );
@@ -264,7 +273,7 @@ int main( int argc, char **argv )
 					{
 						Error( "Error converting from %s to %s\n",
 							ImageLoader::GetName( srcFormat ), ImageLoader::GetName( dstFormat ) );
-						exit( -1 );
+						exit( 1 );
 					}
 
 					if( dstFormat != IMAGE_FORMAT_RGB323232F )
