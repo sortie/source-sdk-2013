@@ -166,12 +166,12 @@ int main(int argc, char* argv[])
 			g_Quiet = true;
 			g_NoPause = true; // no point in pausing if we aren't going to print anything out.
 		}
-		if( stricmp( argv[i], "-nopause" ) == 0 )
+		else if( stricmp( argv[i], "-nopause" ) == 0 )
 		{
 			i++;
 			g_NoPause = true;
 		}
-		if( stricmp( argv[i], "-encrypt" ) == 0 )
+		else if( stricmp( argv[i], "-encrypt" ) == 0 )
 		{
 			g_Encrypt = true;
 			i++;
@@ -185,7 +185,7 @@ int main(int argc, char* argv[])
 			i++;
 			
 		}
-		if( stricmp( argv[i], "-decrypt" ) == 0 )
+		else if( stricmp( argv[i], "-decrypt" ) == 0 )
 		{
 			g_Decrypt = true;
 			i++;
@@ -199,7 +199,7 @@ int main(int argc, char* argv[])
 			i++;
 			
 		}
-		if( stricmp( argv[i], "-newext" ) == 0 )
+		else if( stricmp( argv[i], "-newext" ) == 0 )
 		{
 			i++;
 
@@ -211,6 +211,16 @@ int main(int argc, char* argv[])
 			Q_strncpy( g_Extension, argv[i], sizeof(g_Extension) );
 			i++;
 			
+		}
+		else if( stricmp( argv[i], "-game" ) == 0 )
+		{
+			i += 2;
+			continue;
+		}
+		else if( argv[i][0] == '-' )
+		{
+			i++;
+			continue;
 		}
 		else
 		{
