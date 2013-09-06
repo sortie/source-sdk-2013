@@ -11,8 +11,8 @@
 #include "bitmap/imageformat.h"
 #include "tier1/strtools.h"
 #include "mathlib/mathlib.h"
-#include "bitmap/TGAWriter.h"
-#include "bitmap/TGALoader.h"
+#include "bitmap/tgawriter.h"
+#include "bitmap/tgaloader.h"
 #include <math.h>
 #include <conio.h>
 #include "tier1/utlbuffer.h"
