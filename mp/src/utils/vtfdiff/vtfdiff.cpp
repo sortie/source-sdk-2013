@@ -14,7 +14,9 @@
 #include "tier1/utlmap.h"
 #include "bitmap/imageformat.h"
 #include "mathlib/vector.h"
+#if defined( _WIN32 )
 #include <conio.h>
+#endif
 
 void Usage( void )
 {
@@ -23,29 +25,29 @@ void Usage( void )
 
 bool LoadFileIntoBuffer( const char *pFileName, CUtlBuffer &buf )
 {
-	struct	_stat statBuf;
-	if( _stat( pFileName, &statBuf ) != 0 )
-	{
-		goto error;
-	}
-
-	buf.EnsureCapacity( statBuf.st_size );
 	FILE *fp;
 	fp = fopen( pFileName, "rb" );
 	if( !fp )
 	{
-		goto error;
+		printf( "Can't find file %s\n", pFileName );
+		return false;
 	}
-	
+
+#if defined( _WIN32 )
+	struct _stat statBuf;
+	_fstat(_fileno(fp), &statBuf);
+#else
+	struct stat statBuf;
+	fstat(fileno(fp), &statBuf);
+#endif
+
+	buf.EnsureCapacity( statBuf.st_size );
+
 	int nBytesRead = fread( buf.Base(), 1, statBuf.st_size, fp );
 	fclose( fp );
 
 	buf.SeekPut( CUtlBuffer::SEEK_HEAD, nBytesRead );
 	return true;
-
-error:
-	printf( "Can't find file %s\n", pFileName );
-	return false;
 }
 
 char const * ResourceToString( uint32 uiResType )
