@@ -7,7 +7,9 @@
 //===========================================================================//
 #include <stdlib.h>
 #include <stdio.h>
+#if defined( _WIN32 )
 #include <direct.h>
+#endif
 #include "bitmap/tgaloader.h"
 #include "bitmap/tgawriter.h"
 #include "tier1/utlbuffer.h"
@@ -18,7 +20,7 @@
 void Usage( void )
 {
 	printf( "Usage: tgadiff src1.tga src2.tga diff.tga\n" );
-	exit( -1 );
+	exit( 1 );
 }
 
 int main( int argc, char **argv )
@@ -32,10 +34,14 @@ int main( int argc, char **argv )
 	InitDefaultFileSystem();
 
 	char pCurrentDirectory[MAX_PATH];
+#if defined( _WIN32 )
 	if ( _getcwd( pCurrentDirectory, sizeof(pCurrentDirectory) ) == NULL )
+#else
+	if ( getcwd( pCurrentDirectory, sizeof(pCurrentDirectory) ) == NULL )
+#endif
 	{
 		fprintf( stderr, "Unable to get the current directory\n" );
-		return -1;
+		return 1;
 	}
 	Q_FixSlashes( pCurrentDirectory );
 	Q_StripTrailingSlash( pCurrentDirectory );
@@ -46,7 +52,7 @@ int main( int argc, char **argv )
 	{
 		if ( !Q_IsAbsolutePath( argv[i+1] ) )
 		{
-			Q_snprintf( pBuf[i], sizeof(pBuf[i]), "%s\\%s", pCurrentDirectory, argv[i+1] );
+			Q_snprintf( pBuf[i], sizeof(pBuf[i]), "%s" CORRECT_PATH_SEPARATOR_S "%s", pCurrentDirectory, argv[i+1] );
 			pFileName[i] = pBuf[i];
 		}
 		else
@@ -63,13 +69,13 @@ int main( int argc, char **argv )
 	if ( !g_pFullFileSystem->ReadFile( pFileName[0], NULL, buf1 ) )
 	{
 		fprintf( stderr, "%s not found\n", pFileName[0] );
-		return -1;
+		return 1;
 	}
 
 	if( !TGALoader::GetInfo( buf1, &width1, &height1, &imageFormat1, &gamma1 ) )
 	{
 		printf( "error loading %s\n", pFileName[0] );
-		exit( -1 );
+		exit ( 1 );
 	}
 
 	int width2, height2;
@@ -80,20 +86,20 @@ int main( int argc, char **argv )
 	if ( !g_pFullFileSystem->ReadFile( pFileName[1], NULL, buf2 ) )
 	{
 		fprintf( stderr, "%s not found\n", pFileName[1] );
-		return -1;
+		return 1;
 	}
 
 	if( !TGALoader::GetInfo( buf2, &width2, &height2, &imageFormat2, &gamma2 ) )
 	{
 		printf( "error loading %s\n", pFileName[1] );
-		exit( -1 );
+		exit ( 1 );
 	}
 
 	if( width1 != width2 || height1 != height2 )
 	{
 		printf( "image dimensions different (%dx%d!=%dx%d): can't do diff for %s\n", 
 			width1, height1, width2, height2, pFileName[2] );
-		exit( -1 );
+		exit ( 1 );
 	}
 #if 0
 	// have to allow for different formats for now due to *.txt file screwup.
@@ -101,13 +107,13 @@ int main( int argc, char **argv )
 	{
 		printf( "image format different (%s!=%s). . can't do diff for %s\n", 
 			ImageLoader::GetName( imageFormat1 ), ImageLoader::GetName( imageFormat2 ), pFileName[2] );
-		exit( -1 );
+		exit ( 1 );
 	}
 #endif
 	if( gamma1 != gamma2 )
 	{
 		printf( "image gamma different (%f!=%f). . can't do diff for %s\n", gamma1, gamma2, pFileName[2] );
-		exit( -1 );
+		exit ( 1 );
 	}
 
 	unsigned char *pImage1Tmp = new unsigned char[ImageLoader::GetMemRequired( width1, height1, 1, imageFormat1, false )];
@@ -117,14 +123,14 @@ int main( int argc, char **argv )
 	if( !TGALoader::Load( pImage1Tmp, buf1, width1, height1, imageFormat1, 2.2f, false ) )
 	{
 		printf( "error loading %s\n", pFileName[0] );
-		exit( -1 );
+		exit ( 1 );
 	}
 	
 	buf2.SeekGet( CUtlBuffer::SEEK_HEAD, 0 );
 	if( !TGALoader::Load( pImage2Tmp, buf2, width2, height2, imageFormat2, 2.2f, false ) )
 	{
 		printf( "error loading %s\n", pFileName[1] );
-		exit( -1 );
+		exit ( 1 );
 	}
 
 	unsigned char *pImage1 = new unsigned char[ImageLoader::GetMemRequired( width1, height1, 1, IMAGE_FORMAT_ABGR8888, false )];
@@ -149,7 +155,7 @@ int main( int argc, char **argv )
 	if( !isDifferent )
 	{
 		printf( "Files are the same %s %s : not generating %s\n", pFileName[0], pFileName[1], pFileName[2] );
-		exit( -1 );
+		exit ( 1 );
 	}
 	else
 	{
@@ -171,13 +177,13 @@ int main( int argc, char **argv )
 	if ( !TGAWriter::WriteToBuffer( pDiff, outBuffer, width1, height1, dstImageFormat, dstImageFormat ) )
 	{
 		printf( "error writing %s to buffer\n", pFileName[2] );
-		exit( -1 );
+		exit ( 1 );
 	}
 	
 	if ( !g_pFullFileSystem->WriteFile( pFileName[2], NULL, outBuffer ) )
 	{
 		fprintf( stderr, "unable to write %s\n", pFileName[2] );
-		return -1;
+		return 1;
 	}
 
 	return 0;	
