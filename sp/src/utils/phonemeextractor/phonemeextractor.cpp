@@ -11,16 +11,18 @@
 
 #include "tier0/wchartypes.h"
 #include <stdio.h>
+#if defined( _WIN32 )
 #include <windows.h>
 #include <tchar.h>
 #include "sphelper.h"
 #include "spddkhlp.h"
 // ATL Header Files
 #include <atlbase.h>
+#endif
 // Face poser and util includes
 #include "utlvector.h"
-#include "phonemeextractor/PhonemeExtractor.h"
-#include "PhonemeConverter.h"
+#include "phonemeextractor/phonemeextractor.h"
+#include "phonemeconverter.h"
 #include "sentence.h"
 #include "tier0/dbg.h"
 #include "tier0/icommandline.h"
