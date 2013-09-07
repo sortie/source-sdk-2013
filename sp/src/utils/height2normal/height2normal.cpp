@@ -7,14 +7,18 @@
 //===========================================================================//
 #include <stdio.h>
 #include <stdlib.h>
+#if defined( _WIN32 )
 #include <direct.h>
+#endif
 #include "bitmap/imageformat.h"
 #include "tier1/strtools.h"
 #include "mathlib/mathlib.h"
 #include "bitmap/tgawriter.h"
 #include "bitmap/tgaloader.h"
 #include <math.h>
+#if defined( _WIN32 )
 #include <conio.h>
+#endif
 #include "tier1/utlbuffer.h"
 #include "tier2/tier2.h"
 #include "filesystem.h"
@@ -26,8 +30,10 @@ static void Pause( void )
 {
 	if( !g_NoPause )
 	{
+#if defined( _WIN32 )
 		printf( "Hit a key to continue\n" );
 		getch();
+#endif
 	}
 }
 
@@ -131,7 +137,7 @@ static void LoadConfigFile( const char *pFileName, float *bumpScale, int *startF
 	{
 		fprintf( stderr, "Can't open: %s\n", pFileName );
 		Pause();
-		exit( -1 );
+		exit( 1 );
 	}
 
 	char *key = NULL;
@@ -159,7 +165,7 @@ static void Usage()
 	fprintf( stderr, "-quiet   : don't print anything out, don't pause for input\n" );
 	fprintf( stderr, "-nopause : don't pause for input\n" );
 	Pause();
-	exit( -1 );
+	exit( 1 );
 }
 
 void ProcessFiles( const char *pNormalFileNameWithoutExtension,
@@ -285,10 +291,14 @@ int main( int argc, char **argv )
 	}
 
 	char pCurrentDirectory[MAX_PATH];
+#if defined( _WIN32 )
 	if ( _getcwd( pCurrentDirectory, sizeof(pCurrentDirectory) ) == NULL )
+#else
+	if ( getcwd( pCurrentDirectory, sizeof(pCurrentDirectory) ) == NULL )
+#endif
 	{
 		fprintf( stderr, "Unable to get the current directory\n" );
-		return -1;
+		return 1;
 	}
 
 	Q_FixSlashes( pCurrentDirectory );
@@ -300,7 +310,7 @@ int main( int argc, char **argv )
 		char *pFileName;
 		if ( !Q_IsAbsolutePath( argv[i] ) )
 		{
-			Q_snprintf( normalFileNameWithoutExtension, sizeof(normalFileNameWithoutExtension), "%s\\%s", pCurrentDirectory, argv[i] );
+			Q_snprintf( normalFileNameWithoutExtension, sizeof(normalFileNameWithoutExtension), "%s" CORRECT_PATH_SEPARATOR_S "%s", pCurrentDirectory, argv[i] );
 			pFileName = normalFileNameWithoutExtension;
 		}
 		else
