@@ -13,7 +13,9 @@
 #include "tier1/strtools.h"
 #include "tier0/icommandline.h"
 #include "utldict.h"
+#if defined( _WIN32 )
 #include <windows.h>
+#endif
 #include "utlbuffer.h"
 #include "utlsymbol.h"
 
@@ -55,7 +57,9 @@ void vprint( int depth, const char *fmt, ... )
 	while ( depth-- > 0 )
 	{
 		vprint( 0,  "  " );
+#if defined( _WIN32 )
 		OutputDebugString( "  " );
+#endif
 		if ( fp )
 		{
 			fprintf( fp, "  " );
@@ -63,7 +67,9 @@ void vprint( int depth, const char *fmt, ... )
 	}
 
 	::printf( "%s", string );
+#if defined( _WIN32 )
 	OutputDebugString( string );
+#endif
 
 	if ( fp )
 	{
@@ -139,7 +145,7 @@ void MdlError( char const *fmt, ... )
 	va_start( args, fmt );
 	vprint( 0, fmt, args );
 
-	exit( -1 );
+	exit( 1 );
 }
 
 int OpenGlobalFile( char *src )
